@@ -27,23 +27,27 @@ class Starship:
     }
 
     def __init__(self):
-        self.sum = 0
+        self.requiredFuel = 0
 
     # Fuel calculation
-    def inputModules(self, input):
-        contents = open(input)
+    def inputModules(self, modulesData):
+        contents = open(modulesData)
         for line in contents.readlines():
             self.fuelCounterUpper(int(line))
 
     def fuelCounterUpper(self, mass):
+        # Calculate the fuel and add it to the total required fuel
         fuel = int(mass / 3) - 2
-        self.sum += fuel
+        self.requiredFuel += fuel
+        # Calculate the extra fuel required for the fuel
         self.fuelFuelCounterUpper(fuel)
 
     def fuelFuelCounterUpper(self, fuelMass):
+        # Calculate the fuel and add it to the total required fuel if > 0,
+        # then call this function with the same amount until the fuel is 0 or negative
         fuelFuel = int(fuelMass/3) - 2
         if fuelFuel > 0: 
-            self.sum += fuelFuel
+            self.requiredFuel += fuelFuel
             self.fuelFuelCounterUpper(fuelFuel)
         else: 
             return
@@ -83,7 +87,7 @@ santaShip = Starship()
 
 # Day 1 
 santaShip.inputModules('input.txt')
-print(santaShip.sum)
+print(santaShip.requiredFuel)
 
 # Day 2
 # Test input
