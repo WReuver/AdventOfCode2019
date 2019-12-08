@@ -25,11 +25,11 @@ class OpsDef(Enum):
 class Starship:
     opcodes = {
         "1": { OpsDef.op: Ops.add,
-              OpsDef.params: 3 },
+              OpsDef.params: 4 },
         "2": { OpsDef.op: Ops.multiply,
-               OpsDef.params: 3 },
+               OpsDef.params: 4 },
         "3": { OpsDef.op: Ops.divide,
-               OpsDef.params: 3 },
+               OpsDef.params: 4 },
         "99": { OpsDef.op: Ops.stop,
                 OpsDef.params: 1 }
     }
@@ -71,16 +71,17 @@ class Starship:
         intcodes[1] = a
         intcodes[2] = b
 
-        self.intCodeCalculator(intcodes)
-        return intcodes[0]
+        self.memory = intcodes
+        self.intCodeCalculator()
+        return self.memory
 
-    def intCodeCalculator(self, intcode):
-        address = 0
-        while address < len(intcode)-4:
+    def intCodeCalculator(self):
+        instrPointer = 0
+        while instrPointer < len(self.memory)-4:
             # Determine the opcode and the a & b values
-            opcode = intcode[address]
-            a = intcode[int(intcode[address+1])]
-            b = intcode[int(intcode[address+2])]
+            opcode = self.memory[instrPointer]
+            a = self.memory[int(self.memory[instrPointer+1])]
+            b = self.memory[int(self.memory[instrPointer+2])]
 
             # Determine the result of the operation
             result = self.opcodes[str(opcode)][OpsDef.op](a, b)
@@ -89,17 +90,22 @@ class Starship:
                 break
 
             # Assign the result to the target position and increment the loop counter
-            targetPos = int(intcode[address+3])
-            intcode[targetPos] = result
-            address += 4
+            targetPos = int(self.memory[instrPointer+3])
+            self.memory[targetPos] = result
+            instrPointer += self.opcodes[str(opcode)][OpsDef.params]
 
 if __name__ == '__main__':
     santaShip = Starship()
 
     # Day 1 
     santaShip.inputModules('input.txt')
-    print(santaShip.requiredFuel)
+    print(f"Required fuel: {santaShip.requiredFuel}")
 
     # Day 2
-    print(santaShip.findIntcodeOutput('opcodeinput.txt'))
+    print(f"1202 Program Alarm result: {santaShip.findIntcodeOutput('opcodeinput.txt')[0]}")
 
+    # Day 3
+    for a in range(100):
+        for b in range(100):
+            if santaShip.findIntcodeOutput('opcodeinput.txt', a=a, b=b)[0] == 19690720:
+                print(f" {100*a+b}")
