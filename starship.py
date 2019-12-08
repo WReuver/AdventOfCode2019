@@ -62,16 +62,17 @@ class Starship:
             return
 
     # Intcode calculations
-    def intcodeInput(self, intcodeFile):
+    def findIntcodeOutput(self, intcodeFile, a='12', b ='2'):
         intcodes = open(intcodeFile).readline()
         intcodes = intcodes.strip('\n').split(',')
 
-        # Set the 1202 program alarm state requirements
-        intcodes[1] = '12'
-        intcodes[2] = '2'
+        # Set the input parameters
+        # Defaults to the required parameters to set the 1202 program alarm state
+        intcodes[1] = a
+        intcodes[2] = b
 
         self.intCodeCalculator(intcodes)
-        print("Hello " + str(intcodes[0]))
+        return intcodes[0]
 
     def intCodeCalculator(self, intcode):
         address = 0
@@ -99,6 +100,6 @@ if __name__ == '__main__':
     santaShip.inputModules('input.txt')
     print(santaShip.requiredFuel)
 
-    # Actual input
-    santaShip.intcodeInput('opcodeinput.txt')
+    # Day 2
+    print(santaShip.findIntcodeOutput('opcodeinput.txt'))
 
