@@ -92,37 +92,13 @@ class Starship:
             intcode[targetPos] = result
             address += 4
 
-santaShip = Starship()
+if __name__ == '__main__':
+    santaShip = Starship()
 
-# Day 1 
-santaShip.inputModules('input.txt')
-print(santaShip.requiredFuel)
+    # Day 1 
+    santaShip.inputModules('input.txt')
+    print(santaShip.requiredFuel)
 
-# Day 2
-# Test input
-testInput1 = [1, 0, 0, 0, 99]
-testInput2 = [2, 3, 0, 3, 99]
-testInput3 = [2, 4, 4, 5, 99, 0]
-testInput4 = [1, 1, 1, 4, 99, 5, 6, 0, 99]
-
-santaShip.intCodeCalculator(testInput1)
-print(testInput1[0])
-
-santaShip.intCodeCalculator(testInput2)
-print(testInput2[3])
-
-santaShip.intCodeCalculator(testInput3)
-print(testInput3[5])
-
-santaShip.intCodeCalculator(testInput4)
-print(testInput4[0])
-print(testInput4[4])
-
-# Actual input
-santaShip.intcodeInput('opcodeinput.txt')
-
-print(Starship.opcodes["1"][OpsDef.params])
-print(Starship.opcodes["2"][OpsDef.params])
-print(Starship.opcodes["3"][OpsDef.params])
-print(Starship.opcodes["99"][OpsDef.params])
+    # Actual input
+    santaShip.intcodeInput('opcodeinput.txt')
 
