@@ -18,16 +18,25 @@ class Ops():
     def stop(a, b):
         return
 
+class OpsDef(Enum):
+    op = 0
+    params = 1
+
 class Starship:
     opcodes = {
-        "1": Ops.add,
-        "2": Ops.multiply,
-        "3": Ops.divide,
-        "99": Ops.stop
+        "1": { OpsDef.op: Ops.add,
+              OpsDef.params: 3 },
+        "2": { OpsDef.op: Ops.multiply,
+               OpsDef.params: 3 },
+        "3": { OpsDef.op: Ops.divide,
+               OpsDef.params: 3 },
+        "99": { OpsDef.op: Ops.stop,
+                OpsDef.params: 1 }
     }
 
     def __init__(self):
         self.requiredFuel = 0
+        self.memory = []
 
     # Fuel calculation
     def inputModules(self, modulesData):
@@ -62,26 +71,26 @@ class Starship:
         intcodes[2] = '2'
 
         self.intCodeCalculator(intcodes)
-        print(intcodes[0])
+        print("Hello " + str(intcodes[0]))
 
     def intCodeCalculator(self, intcode):
-        i = 0
-        while i < len(intcode)-4:
+        address = 0
+        while address < len(intcode)-4:
             # Determine the opcode and the a & b values
-            opcode = intcode[i]
-            a = intcode[int(intcode[i+1])]
-            b = intcode[int(intcode[i+2])]
+            opcode = intcode[address]
+            a = intcode[int(intcode[address+1])]
+            b = intcode[int(intcode[address+2])]
 
             # Determine the result of the operation
-            result = self.opcodes[str(opcode)](a, b)
+            result = self.opcodes[str(opcode)][OpsDef.op](a, b)
             # Ensure 99 halts the program
             if result is None:
                 break
 
             # Assign the result to the target position and increment the loop counter
-            targetPos = int(intcode[i+3])
+            targetPos = int(intcode[address+3])
             intcode[targetPos] = result
-            i += 4
+            address += 4
 
 santaShip = Starship()
 
@@ -111,4 +120,9 @@ print(testInput4[4])
 
 # Actual input
 santaShip.intcodeInput('opcodeinput.txt')
+
+print(Starship.opcodes["1"][OpsDef.params])
+print(Starship.opcodes["2"][OpsDef.params])
+print(Starship.opcodes["3"][OpsDef.params])
+print(Starship.opcodes["99"][OpsDef.params])
 
