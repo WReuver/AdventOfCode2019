@@ -22,6 +22,7 @@ class OpsDef(Enum):
     op = 0
     params = 1
 
+
 class Starship:
     opcodes = {
         "1": { OpsDef.op: Ops.add,
@@ -34,9 +35,18 @@ class Starship:
                 OpsDef.params: 1 }
     }
 
+    wiringDirs = {
+        "R": [1, 0],
+        "L": [-1, 0],
+        "U": [0, 1],
+        "D": [0, -1]
+    }
+
     def __init__(self):
         self.requiredFuel = 0
         self.memory = []
+        self.wiring = []
+        self.wireMap = []
 
     # Fuel calculation
     def inputModules(self, modulesData):
@@ -92,20 +102,58 @@ class Starship:
             # Assign the result to the target position and increment the loop counter
             targetPos = int(self.memory[instrPointer+3])
             self.memory[targetPos] = result
-            instrPointer += self.opcodes[str(opcode)][OpsDef.params]
+            instrPointer += self.opcodes[str(opcode)][OpsDef.params]    
+
+    def crossWiringAnalyzer(self, wiringData):
+        wiring = open(wiringData).readlines()
+        fixedWiring = []        
+        for wire in wiring: 
+            fixedWire = wire.strip('\n').split(',')           
+            fixedWiring.append(fixedWire)
+            self.mapWires(fixedWire)
+
+        wiring = fixedWiring
+        # print(wiring)
+
+    def mapWires(self, wire):
+        wireIndex = len(self.wireMap)
+        self.wireMap.append([[0, 0]])
+        newWireMap = self.wireMap[wireIndex]
+
+        for seg in wire:
+            direction = self.wiringDirs[seg[0]]
+            length = int(seg[1:])            
+            coords = [i*length for i in direction]
+
+            wireSegIndex = len(self.wireMap[wireIndex])-1
+            mult = ([x + y for x, y in zip(self.wireMap[wireIndex][wireSegIndex], coords)])
+            newWireMap.append(mult)
+
+    def analyzeWires(self):
+        crossSections = []
+        for corner in self.wireMap[0]:
+            for c in self.wireMap[1]:
+                if corner == c:
+                    crossSections.append(corner)
+
+        return crossSections
+
 
 if __name__ == '__main__':
     santaShip = Starship()
 
     # Day 1 
-    santaShip.inputModules('input.txt')
+    santaShip.inputModules('modules.txt')
     print(f"Required fuel: {santaShip.requiredFuel}")
 
-    # Day 2
-    print(f"1202 Program Alarm result: {santaShip.findIntcodeOutput('opcodeinput.txt')[0]}")
+    # Day 2 Puzzle 1
+    print(f"1202 Program Alarm result: {santaShip.findIntcodeOutput('opcodes.txt')[0]}")
 
-    # Day 3
+    # Day 2 Puzzle 2
     for a in range(100):
         for b in range(100):
-            if santaShip.findIntcodeOutput('opcodeinput.txt', a=a, b=b)[0] == 19690720:
-                print(f" {100*a+b}")
+            if santaShip.findIntcodeOutput('opcodes.txt', a=a, b=b)[0] == 19690720:
+                print(f"({a}, {b}) input combination results in a 19690720 output.")
+
+    # Day 3
+    santaShip.crossWiringAnalyzer('wiring.txt')

@@ -27,5 +27,15 @@ class TestStarship(unittest.TestCase):
         starship.intCodeCalculator()
         self.assertEqual(starship.memory, [30, 1, 1, 4, 2, 5, 6, 0, 99])
 
+    def test_crossWiringAnalyzer(self):
+        starship = Starship()
+
+        starship.mapWires(['R8', 'U5', 'L5', 'D3'])
+        starship.mapWires(['U7', 'R6', 'D4', 'L4'])
+        print(f"{starship.wireMap[0]}")
+        print(f"{starship.wireMap[1]}")
+
+        print(starship.analyzeWires())
+
 if __name__ == '__main__':
     unittest.main()
