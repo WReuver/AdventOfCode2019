@@ -27,33 +27,40 @@ class TestStarship(unittest.TestCase):
         starship.intCodeCalculator()
         self.assertEqual(starship.memory, [30, 1, 1, 4, 2, 5, 6, 0, 99])
 
-    def test_crossWiringAnalyzer(self):
+    # def test_crossWiringAnalyzer(self):
+    #     starship = Starship()
+
+
+    #     # print(starship.analyzeWires2())
+    #     wire1 = ([6, 3], [2, 3])
+    #     wire2 = ([3, 5], [3, 2])
+    #     self.assertEqual(starship.compareWires(wire1, wire2), (3.0, 3.0))
+
+    #     wire1 = ([6, 7], [6, 3])
+    #     wire2 = ([8, 5], [3, 5])
+    #     self.assertEqual(starship.compareWires(wire1, wire2), (6.0, 5.0))
+
+    #     starship = Starship()
+    #     starship.addWire(['R8', 'U5', 'L5', 'D3'])
+    #     starship.addWire(['U7', 'R6', 'D4', 'L4'])
+    #     print(f"{starship.wireMap[0]}")
+    #     print(f"{starship.wireMap[1]}")
+    #     print(starship.analyzeWires())
+
+    #     starship = Starship()
+    #     starship.addWire(['R75', 'D30', 'R83', 'U83', 'L12', 'D49', 'R71', 'U7', 'L72']) 
+    #     starship.addWire(['U62', 'R66', 'U55', 'R34', 'D71', 'R55', 'D58', 'R83'])
+    #     print(f"{starship.wireMap[0]}")
+    #     print(f"{starship.wireMap[1]}")
+    #     print(starship.analyzeWires())
+    #     # starship.addWire(['R98', 'U47', 'R26', 'D63', 'R33', 'U'])
+
+    def test_passwordAnalyzer(self):
         starship = Starship()
 
-
-        # print(starship.analyzeWires2())
-        wire1 = ([6, 3], [2, 3])
-        wire2 = ([3, 5], [3, 2])
-        self.assertEqual(starship.compareWires(wire1, wire2), (3.0, 3.0))
-
-        wire1 = ([6, 7], [6, 3])
-        wire2 = ([8, 5], [3, 5])
-        self.assertEqual(starship.compareWires(wire1, wire2), (6.0, 5.0))
-
-        starship = Starship()
-        starship.addWire(['R8', 'U5', 'L5', 'D3'])
-        starship.addWire(['U7', 'R6', 'D4', 'L4'])
-        print(f"{starship.wireMap[0]}")
-        print(f"{starship.wireMap[1]}")
-        print(starship.analyzeWires())
-
-        starship = Starship()
-        starship.addWire(['R75', 'D30', 'R83', 'U83', 'L12', 'D49', 'R71', 'U7', 'L72']) 
-        starship.addWire(['U62', 'R66', 'U55', 'R34', 'D71', 'R55', 'D58', 'R83'])
-        print(f"{starship.wireMap[0]}")
-        print(f"{starship.wireMap[1]}")
-        print(starship.analyzeWires())
-        # starship.addWire(['R98', 'U47', 'R26', 'D63', 'R33', 'U'])
+        self.assertEqual(starship.validPasswordCombinations(112233, 112234), 1)
+        self.assertEqual(starship.validPasswordCombinations(123444, 123445), 0)
+        self.assertEqual(starship.validPasswordCombinations(111122, 111123), 1)
 
 if __name__ == '__main__':
     unittest.main()

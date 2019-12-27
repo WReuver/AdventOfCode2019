@@ -1,5 +1,7 @@
 from enum import Enum
 from util import determinant
+from fuel import FuelSystem
+from password import PasswordAnalyzer
 import os
 
 class Ops():
@@ -43,33 +45,25 @@ class Starship:
     }
 
     def __init__(self):
-        self.requiredFuel = 0
+        # self.requiredFuel = 0
         self.memory = []
         self.wiring = []
         self.wireMap = []
 
-    # Fuel calculation
-    def inputModules(self, modulesData):
-        contents = open(modulesData)
-        for line in contents.readlines():
-            self.fuelCounterUpper(int(line))
+        self.fuelSystem = FuelSystem()
+        self.pwAnalyzer = PasswordAnalyzer()
+        
+    def computeRequiredFuel(self, modulesMassData):
+        """
+        Computes and returns the required amount of fuel for the modules 
+        """
+        return self.fuelSystem.computeRequiredFuel(modulesMassData)
 
-    def fuelCounterUpper(self, mass):
-        # Calculate the fuel and add it to the total required fuel
-        fuel = int(mass / 3) - 2
-        self.requiredFuel += fuel
-        # Calculate the extra fuel required for the fuel
-        self.fuelFuelCounterUpper(fuel)
-
-    def fuelFuelCounterUpper(self, fuelMass):
-        # Calculate the fuel and add it to the total required fuel if > 0,
-        # then call this function with the same amount until the fuel is 0 or negative
-        fuelFuel = int(fuelMass/3) - 2
-        if fuelFuel > 0: 
-            self.requiredFuel += fuelFuel
-            self.fuelFuelCounterUpper(fuelFuel)
-        else: 
-            return
+    def validPasswordCombinations(self, start, end):
+        """
+        Returns the number of valid password combinations within the given start to end range
+        """
+        return self.pwAnalyzer.validCombinations(start, end)
 
     # Intcode calculations
     def findIntcodeOutput(self, intcodeFile, a='12', b ='2'):
@@ -191,13 +185,13 @@ class Starship:
                 closest = dist
         
         return closest
+        
 
 if __name__ == '__main__':
     santaShip = Starship()
 
     # Day 1 
-    santaShip.inputModules('modules.txt')
-    print(f"Required fuel: {santaShip.requiredFuel}")
+    print(f"Required fuel: {santaShip.computeRequiredFuel('modules.txt')}")
 
     # Day 2 Puzzle 1
     print(f"1202 Program Alarm result: {santaShip.findIntcodeOutput('opcodes.txt')[0]}")
@@ -210,3 +204,6 @@ if __name__ == '__main__':
 
     # Day 3
     santaShip.loadWiringData('wiring.txt')
+
+    # Day 4 
+    print(f"Valid passwords: {santaShip.validPasswordCombinations(271973, 785961)}")
