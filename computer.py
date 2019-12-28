@@ -1,6 +1,6 @@
 from enum import Enum
 
-class Ops():
+class Operation():
     @staticmethod
     def add(a, b):
         return int(a) + int(b)
@@ -17,35 +17,35 @@ class Ops():
     def stop(a, b):
         return
 
-class OpsDef(Enum):
-    op = 0
-    params = 1
+
+class Instruction:
+    def __init__(self, operation: Operation, params):        
+        self.operation = operation
+        self.params = params
 
 class IntCodeComputer():
     opcodes = {
-        "1": { OpsDef.op: Ops.add,
-              OpsDef.params: 4 },
-        "2": { OpsDef.op: Ops.multiply,
-               OpsDef.params: 4 },
-        "3": { OpsDef.op: Ops.divide,
-               OpsDef.params: 4 },
-        "99": { OpsDef.op: Ops.stop,
-                OpsDef.params: 1 }
+        "1": Instruction(Operation.add, 4),
+        "2": Instruction(Operation.multiply, 4),
+        "3": Instruction(Operation.divide, 4),
+        "99": Instruction(Operation.stop, 1)
     }
 
     def __init__(self):
         self.memory = []
 
     # Intcode calculations
-    def compute(self, intCode, a='12', b ='2'):
+    def compute(self, intCode, a=None, b=None):
         # Set the input parameters
         # Defaults to the required parameters to set the 1202 program alarm state
-        intCode[1] = a
-        intCode[2] = b
+        if a:
+            intCode[1] = a
+        if b:
+            intCode[2] = b
 
         self.memory = intCode
         self.run()
-        return self.memory[0]
+        return self.memory
 
     def run(self):
         instrPointer = 0
@@ -56,7 +56,7 @@ class IntCodeComputer():
             b = self.memory[int(self.memory[instrPointer+2])]
 
             # Determine the result of the operation
-            result = self.opcodes[str(opcode)][OpsDef.op](a, b)
+            result = self.opcodes[str(opcode)].operation(a, b)
             # Ensure 99 halts the program
             if result is None:
                 break
@@ -64,4 +64,4 @@ class IntCodeComputer():
             # Assign the result to the target position and increment the loop counter
             targetPos = int(self.memory[instrPointer+3])
             self.memory[targetPos] = result
-            instrPointer += self.opcodes[str(opcode)][OpsDef.params]
+            instrPointer += self.opcodes[str(opcode)].params
