@@ -107,6 +107,4 @@ class Segment:
     def __init__(self, start: Point, end: Point):
         self.start = start
         self.end = end
-
-
         
