@@ -4,15 +4,17 @@ from computer import IntCodeComputer, Operation
 
 class TestStarship(unittest.TestCase):
     def test_instruction_parameter_length(self):
-        self.assertEqual(IntCodeComputer.opcodes["1"].params, 4)
-        self.assertEqual(IntCodeComputer.opcodes["2"].params, 4)
-        self.assertEqual(IntCodeComputer.opcodes["3"].params, 4)
-        self.assertEqual(IntCodeComputer.opcodes["99"].params, 1)
+        self.assertEqual(IntCodeComputer.opcodes["01"].length, 4)
+        self.assertEqual(IntCodeComputer.opcodes["02"].length, 4)
+        self.assertEqual(IntCodeComputer.opcodes["03"].length, 2)
+        self.assertEqual(IntCodeComputer.opcodes["04"].length, 2)
+        self.assertEqual(IntCodeComputer.opcodes["99"].length, 1)
 
     def test_instruction_operation(self):
-        self.assertEqual(IntCodeComputer.opcodes["1"].operation, Operation.add)
-        self.assertEqual(IntCodeComputer.opcodes["2"].operation, Operation.multiply)
-        self.assertEqual(IntCodeComputer.opcodes["3"].operation, Operation.divide)
+        self.assertEqual(IntCodeComputer.opcodes["01"].operation, Operation.add)
+        self.assertEqual(IntCodeComputer.opcodes["02"].operation, Operation.multiply)
+        self.assertEqual(IntCodeComputer.opcodes["03"].operation, Operation.insert)
+        self.assertEqual(IntCodeComputer.opcodes["04"].operation, Operation.extract)
         self.assertEqual(IntCodeComputer.opcodes["99"].operation, Operation.stop)
 
     def test_intCodeCalculator(self):
@@ -32,31 +34,31 @@ class TestStarship(unittest.TestCase):
         intcode = [1, 1, 1, 4, 99, 5, 6, 0, 99]
         self.assertEqual(intCodeComp.compute(intcode), [30, 1, 1, 4, 2, 5, 6, 0, 99])
 
-    def test_crossWiringAnalyzer(self):
-        starship = Starship()
+    # def test_crossWiringAnalyzer(self):
+    #     starship = Starship()
 
-        wire1 = ([6, 3], [2, 3])
-        wire2 = ([3, 5], [3, 2])
-        self.assertEqual(starship.compareWires(wire1, wire2), (3.0, 3.0))
+    #     wire1 = ([6, 3], [2, 3])
+    #     wire2 = ([3, 5], [3, 2])
+    #     self.assertEqual(starship.compareWires(wire1, wire2), (3.0, 3.0))
 
-        wire1 = ([6, 7], [6, 3])
-        wire2 = ([8, 5], [3, 5])
-        self.assertEqual(starship.compareWires(wire1, wire2), (6.0, 5.0))
+    #     wire1 = ([6, 7], [6, 3])
+    #     wire2 = ([8, 5], [3, 5])
+    #     self.assertEqual(starship.compareWires(wire1, wire2), (6.0, 5.0))
 
-        starship = Starship()
-        starship.addWire(['R8', 'U5', 'L5', 'D3'])
-        starship.addWire(['U7', 'R6', 'D4', 'L4'])
-        print(f"{starship.wireMap[0]}")
-        print(f"{starship.wireMap[1]}")
-        print(starship.analyzeWires())
+    #     starship = Starship()
+    #     starship.addWire(['R8', 'U5', 'L5', 'D3'])
+    #     starship.addWire(['U7', 'R6', 'D4', 'L4'])
+    #     print(f"{starship.wireMap[0]}")
+    #     print(f"{starship.wireMap[1]}")
+    #     print(starship.analyzeWires())
 
-        starship = Starship()
-        starship.addWire(['R75', 'D30', 'R83', 'U83', 'L12', 'D49', 'R71', 'U7', 'L72']) 
-        starship.addWire(['U62', 'R66', 'U55', 'R34', 'D71', 'R55', 'D58', 'R83'])
-        print(f"{starship.wireMap[0]}")
-        print(f"{starship.wireMap[1]}")
-        print(starship.analyzeWires())
-        # starship.addWire(['R98', 'U47', 'R26', 'D63', 'R33', 'U'])
+    #     starship = Starship()
+    #     starship.addWire(['R75', 'D30', 'R83', 'U83', 'L12', 'D49', 'R71', 'U7', 'L72']) 
+    #     starship.addWire(['U62', 'R66', 'U55', 'R34', 'D71', 'R55', 'D58', 'R83'])
+    #     print(f"{starship.wireMap[0]}")
+    #     print(f"{starship.wireMap[1]}")
+    #     print(starship.analyzeWires())
+    #     # starship.addWire(['R98', 'U47', 'R26', 'D63', 'R33', 'U'])
 
     def test_passwordAnalyzer(self):
         starship = Starship()

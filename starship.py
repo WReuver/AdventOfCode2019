@@ -47,19 +47,19 @@ if __name__ == '__main__':
     santaShip = Starship()
 
     # Day 1 
-    print(f"Required fuel: {santaShip.computeRequiredFuel('modules.txt')}")
+    print(f"== Day 1 - Star One and Two ==\nRequired fuel: {santaShip.computeRequiredFuel('modules.txt')}")
 
     # Day 2 Puzzle 1
-    print(f"1202 Program Alarm result: {santaShip.computeIntCodeResults('opcodes.txt')}")
+    print(f"== Day 2 - Star One ==\n1202 Program Alarm result: {santaShip.computeIntCodeResults('opcodes.txt')[0]}")
 
     # Day 2 Puzzle 2
     for a in range(100):
         for b in range(100):
-            if santaShip.computeIntCodeResults('opcodes.txt', a=a, b=b) == 19690720:
-                print(f"({a}, {b}) input combination results in a 19690720 output.")
+            if santaShip.computeIntCodeResults('opcodes.txt', a=a, b=b)[0] == 19690720:
+                print(f"-- Day 2 - Star Two --\nInput combination a = {a}, b = {b} results in a 19690720 output.")
 
     # Day 3
-    santaShip.findClosestWiringIntersection('wiring.txt')
+    # santaShip.findClosestWiringIntersection('wiring.txt')
 
     # Day 4 
-    print(f"Valid passwords: {santaShip.validPasswordCombinations(271973, 785961)}")
+    print(f"== Day 4 - Star One and Two ==\nValid passwords: {santaShip.validPasswordCombinations(271973, 785961)}")
