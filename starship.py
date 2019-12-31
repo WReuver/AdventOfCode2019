@@ -30,6 +30,13 @@ class Starship:
         # 
         return self.intCodeComputer.compute(intCode, a , b)
 
+    def runIntCodeDiagnostics(self, intCodeFile, id):
+        intCode = open(intCodeFile).readline()
+
+        intCode = intCode.strip('\n').split(',')
+
+        return self.intCodeComputer.diagnostics(intCode, '1')
+
     def findClosestWiringIntersection(self, wiringData):
         self.wiring.loadWiringData(wiringData)
 
@@ -63,3 +70,5 @@ if __name__ == '__main__':
 
     # Day 4 
     print(f"== Day 4 - Star One and Two ==\nValid passwords: {santaShip.validPasswordCombinations(271973, 785961)}")
+
+    # Day 5
