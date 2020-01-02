@@ -1,58 +1,11 @@
 import math
 from enum import Enum
 
-class Operation():
-    pass
-    # @staticmethod
-    # def add(code, memory, pointer):
-    #     if int(code[Parameter.One]) == ParameterMode.Position:
-    #         a = memory[int(memory[pointer+1])]
-    #     else:
-    #         a = memory[pointer+1]
-
-    #     if int(code[Parameter.Two]) == ParameterMode.Position:
-    #         b = memory[int(memory[pointer+2])]
-    #     else:
-    #         b = memory[pointer+2]
-
-    #     if int(code[Parameter.Three]) == ParameterMode.Position:
-    #         targetPos = memory[int(memory[pointer+3])]
-    #     else: 
-    #         pass
-
-    #     if a is not None and b is not None:
-    #         return int(a) + int(b)
-    #     else:
-    #         return None
-
-    #     # return int(a) + int(b)
-
-    # @staticmethod
-    # def multiply(a, b):
-    #     return int(a) * int(b)
-
-    # @staticmethod
-    # def divide(a, b):
-    #     return int(a)/int(b)
-
-    # @staticmethod
-    # def insert(a, index, memory=None):
-    #     if memory is not None:
-    #         memory[index] = a
-
-    # @staticmethod
-    # def extract(index, memory):
-    #     if memory is not None:
-    #         return memory[index]
-
-    # @staticmethod
-    # def stop(a, b):
-    #     return
-
 
 class ParameterMode():
     Position = 0
     Immediate = 1
+    
 
 class Parameter():
     One = 1
@@ -61,7 +14,7 @@ class Parameter():
 
 
 class Instruction:
-    def __init__(self, operation: Operation, length):        
+    def __init__(self, operation, length):        
         self.operation = operation
         self.length = length
 
@@ -78,21 +31,29 @@ class IntCodeComputer():
             "04": Instruction(self.extract, 2),
             "99": Instruction(self.stop, 1)
         }
+        self.results = []
 
     def diagnostics(self, program, id):
-        self.memory = program
+        # Load the program into memory
+        self.memory = [int(i) for i in program]
+        # Empty the diagnostic results buffer
+        self.results = []
+        # Run the program with the provided id value and report the diagnostic results
         self.run(id)
-        return self.memory
+        return self.results
 
     def compute(self, program, a=None, b=None):
+        # Load the program into memory
+        self.memory = program
+
         # Set the input parameters
         # Defaults to the required parameters to set the 1202 program alarm state
         if a:
             program[1] = a
         if b:
             program[2] = b
-
-        self.memory = program
+            
+        # Run the program and return the memory as the result
         self.run()
         return self.memory
 
@@ -120,28 +81,27 @@ class IntCodeComputer():
             self.pointer += self.opcodes[op].length
 
     def splitOpcode(self, opcode):
+        # Convert opcode to string so it can be easily manipulated
         opcode = str(opcode)
-        # print(f"Evaluating opcode '{opcode}'")
-
-        params = len(opcode) - 2
-        # print(f"Nr. of params: {params}")
-
+        # Pad the opcode with zeroes so it is five characters long
         opcode = opcode.zfill(5)
 
+        # The parameter mode portion of the opcode includes all but the last two characters
         paramModes = list(opcode[:-2])
 
-        arr = [opcode[-2:]]
-        while paramModes:
-            arr.append(paramModes.pop())
+        # Start the opcode list with the operation (last 2 characters)
+        opcodeList = [opcode[-2:]]
 
-        # print(arr)
-        # arr = [int(x) for x in arr]
-        return arr
+        # Fill the opcode list with the remaining parameter modes and return it
+        #   Parameter modes are stored right to left, so popping the parameter modes and appending
+        #    them results in a left to right order
+        while paramModes:
+            opcodeList.append(paramModes.pop())
+
+        return opcodeList
 
     def add(self, code):
-        # a = None
-        # b = None
-
+        # For each parameter, determine the mode and retrieve the appropriate value
         if int(code[Parameter.One]) == ParameterMode.Position:
             a = self.memory[int(self.memory[self.pointer+1])]
         else:
@@ -152,22 +112,18 @@ class IntCodeComputer():
         else:
             b = self.memory[self.pointer+2]
 
-        # if int(code[Parameter.Three]) == ParameterMode.Position:
+        # Determine the target (write) position
         targetPos = int(self.memory[self.pointer + 3])
-        # else: 
-        #     targetPos = int(self.memory[self.pointer + 3])
 
+        # Execute the instruction if the values are valid
         if a is not None and b is not None and targetPos is not None:
             self.memory[targetPos] = int(a) + int(b)
             return self.memory[targetPos]
         else:
-            # TODO Error
-            return None
+            print(f"Addition Instruction Error: Value {a}, {b} or {targetPos} is not a number or a string")
 
     def multiply(self, code):
-        a = None
-        b = None
-
+        # For each parameter, determine the mode and retrieve the appropriate value
         if int(code[Parameter.One]) == int(ParameterMode.Position):
             a = self.memory[int(self.memory[self.pointer+1])]
         else:
@@ -178,38 +134,26 @@ class IntCodeComputer():
         else:
             b = self.memory[self.pointer+2]
 
-        if int(code[Parameter.Three]) == ParameterMode.Position:
-            targetPos = int(self.memory[self.pointer + 3])
-            # self.memory[int(self.memory[self.pointer+3])]
-        else: 
-            targetPos = int(self.memory[self.pointer + 3])
+        # Determine the target (write) position
+        targetPos = int(self.memory[self.pointer + 3])
 
-        if a is not None and b is not None:
+        # Execute the instruction if the values are valid
+        if a is not None and b is not None and targetPos is not None:
             self.memory[targetPos] = int(a) * int(b)
             return self.memory[targetPos]
         else:
-            # TODO Error
-            return None
+            print(f"Multiplication Instruction Error: Value {a}, {b} or {targetPos} is not a number or a string")
 
     def insert(self, code, val):
-        a = code[1]
-        self.memory[a] = val
+        a = int(self.memory[self.pointer+1])
+        if a is not None:
+            self.memory[a] = val
+        else:
+            print(f"Insertion Error: Value {a} is not a number or a string")
 
     def extract(self, code):
-        a = code[1]
-        return self.memory[a]
+        a = self.memory[self.pointer + 1]
+        self.results.append(self.memory[a])
 
     def stop(self):
         return None
-
-if __name__ == "__main__":
-    comp = IntCodeComputer()
-
-    intcode = [1002, 4, 3, 4, 33]
-    # comp.memory = intcode
-    print(comp.compute(intcode))
-    # a = "3"
-    # print(f"{comp.splitOpcode(a)}")
-    # print(f"{comp.add([0, 1, 2, 0])}")
-    # print(f"{comp.splitOpcode(1002)}")
-

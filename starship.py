@@ -72,3 +72,4 @@ if __name__ == '__main__':
     print(f"== Day 4 - Star One and Two ==\nValid passwords: {santaShip.validPasswordCombinations(271973, 785961)}")
 
     # Day 5
+    print(f"== Day 5 - Star One ==\nDiagnostic Result: {santaShip.runIntCodeDiagnostics('diagnostics.txt', 1)}")
