@@ -36,20 +36,20 @@ class IntCodeComputer():
             "08": Instruction(self.equals, 4),
             "99": Instruction(self.stop, 1)
         }
-        self.results = []
+        self.output = []
 
     def diagnostics(self, program, id):
         # Load the program into memory
         self.memory = [int(i) for i in program]
         # Empty the diagnostic results buffer
-        self.results = []
+        self.output = []
         # Run the program with the provided id value and report the diagnostic results
         self.run(id)
-        return self.results
+        return self.output
 
     def compute(self, program, a=None, b=None):
         # Load the program into memory
-        self.memory = program
+        self.memory = [int(i) for i in program]
 
         # Set the input parameters
         # Defaults to the required parameters to set the 1202 program alarm state
@@ -115,16 +115,7 @@ class IntCodeComputer():
         self.didPointerMove = True
 
     def add(self, code):
-        # For each parameter, determine the mode and retrieve the appropriate value
-        if int(code[Parameter.One]) == ParameterMode.Position:
-            a = self.memory[int(self.memory[self.pointer+1])]
-        else:
-            a = self.memory[self.pointer+1]
-
-        if int(code[Parameter.Two]) == ParameterMode.Position:
-            b = self.memory[int(self.memory[self.pointer+2])]
-        else:
-            b = self.memory[self.pointer+2]
+        a, b = self.getParameters(code, 2)
 
         # Determine the target (write) position
         targetPos = int(self.memory[self.pointer + 3])
@@ -137,16 +128,7 @@ class IntCodeComputer():
             print(f"Addition Instruction Error: Value {a}, {b} or {targetPos} is not a number or a string")
 
     def multiply(self, code):
-        # For each parameter, determine the mode and retrieve the appropriate value
-        if int(code[Parameter.One]) == int(ParameterMode.Position):
-            a = self.memory[int(self.memory[self.pointer+1])]
-        else:
-            a = self.memory[self.pointer+1]
-
-        if int(code[Parameter.Two]) == ParameterMode.Position:
-            b = self.memory[int(self.memory[self.pointer+2])]
-        else:
-            b = self.memory[self.pointer+2]
+        a, b = self.getParameters(code, 2)
 
         # Determine the target (write) position
         targetPos = int(self.memory[self.pointer + 3])
@@ -159,7 +141,7 @@ class IntCodeComputer():
             print(f"Multiplication Instruction Error: Value {a}, {b} or {targetPos} is not a number or a string")
 
     def insert(self, code, val):
-        a = int(self.memory[self.pointer+1])
+        a = self.memory[self.pointer+1]
         if a is not None:
             self.memory[a] = val
         else:
@@ -167,67 +149,33 @@ class IntCodeComputer():
 
     def extract(self, code):
         a = self.memory[self.pointer + 1]
+        # If the parameter is in position mode, append the value at the position
         if int(code[Parameter.One]) == ParameterMode.Position:
-            self.results.append(self.memory[a])
+            self.output.append(self.memory[a])
+        # Else append the value
         else:
-            self.results.append(a)
-
+            self.output.append(a)
 
     def jumpIfTrue(self, code):
-        # For each parameter, determine the mode and retrieve the appropriate value
-        if int(code[Parameter.One]) == ParameterMode.Position:
-            a = self.memory[int(self.memory[self.pointer+1])]
-        else:
-            a = self.memory[self.pointer+1]
+        a, b = self.getParameters(code, 2)
 
         # Do nothing if the first parameter is a zero
         if a == 0:
             return
-
-        # For each parameter, determine the mode and retrieve the appropriate value
-        if int(code[Parameter.Two]) == ParameterMode.Position:
-            b = self.memory[int(self.memory[self.pointer+2])]
         else:
-            b = self.memory[self.pointer+2]
-
-        self.movePointer(b)    
+            self.movePointer(b)    
 
     def jumpIfFalse(self, code):
-        # For each parameter, determine the mode and retrieve the appropriate value
-        if int(code[Parameter.One]) == ParameterMode.Position:
-            a = self.memory[int(self.memory[self.pointer+1])]
-        else:
-            a = self.memory[self.pointer+1]
+        a, b = self.getParameters(code, 2)
 
         # Do nothing if the first parameter is a zero
         if a != 0:
             return
-
-        # For each parameter, determine the mode and retrieve the appropriate value
-        if int(code[Parameter.Two]) == ParameterMode.Position:
-            b = self.memory[int(self.memory[self.pointer+2])]
         else:
-            b = self.memory[self.pointer+2]
-
-        self.movePointer(b)
+            self.movePointer(b)
 
     def lessThan(self, code):
-        # For each parameter, determine the mode and retrieve the appropriate value
-        if int(code[Parameter.One]) == ParameterMode.Position:
-            a = self.memory[int(self.memory[self.pointer+1])]
-        else:
-            a = self.memory[self.pointer+1]
-
-        # For each parameter, determine the mode and retrieve the appropriate value
-        if int(code[Parameter.Two]) == ParameterMode.Position:
-            b = self.memory[int(self.memory[self.pointer+2])]
-        else:
-            b = self.memory[self.pointer+2]
-
-        # # For each parameter, determine the mode and retrieve the appropriate value
-        # if int(code[Parameter.Three]) == ParameterMode.Position:
-        #     c = self.memory[int(self.memory[self.pointer+3])]
-        # else:
+        a, b = self.getParameters(code, 2)
         targetPos = self.memory[self.pointer+3]
 
         if a < b:
@@ -236,22 +184,7 @@ class IntCodeComputer():
             self.memory[targetPos] = 0 
 
     def equals(self, code):
-        # For each parameter, determine the mode and retrieve the appropriate value
-        if int(code[Parameter.One]) == ParameterMode.Position:
-            a = self.memory[int(self.memory[self.pointer+1])]
-        else:
-            a = self.memory[self.pointer+1]
-
-        # For each parameter, determine the mode and retrieve the appropriate value
-        if int(code[Parameter.Two]) == ParameterMode.Position:
-            b = self.memory[int(self.memory[self.pointer+2])]
-        else:
-            b = self.memory[self.pointer+2]
-
-        # # For each parameter, determine the mode and retrieve the appropriate value
-        # if int(code[Parameter.Three]) == ParameterMode.Position:
-        #     c = self.memory[int(self.memory[self.pointer+3])]
-        # else:
+        a, b = self.getParameters(code, 2)
         targetPos = self.memory[self.pointer+3]
 
         if a == b:
@@ -261,3 +194,23 @@ class IntCodeComputer():
 
     def stop(self):
         return None
+
+    def getParameters(self, opcodeList, length) -> Tuple:
+        # Determine the parameter mode for the first parameter, and return its value
+        if int(opcodeList[Parameter.One]) == ParameterMode.Position:
+            a = self.memory[self.memory[self.pointer+1]]
+        else:
+            a = self.memory[self.pointer+1]
+
+        if length < 2:
+            return a,
+
+        if int(opcodeList[Parameter.Two]) == ParameterMode.Position:
+            b = self.memory[self.memory[self.pointer+2]]
+        else:
+            b = self.memory[self.pointer+2]
+
+        if length < 3:
+            return a, b
+
+        
