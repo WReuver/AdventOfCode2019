@@ -35,7 +35,7 @@ class Starship:
 
         intCode = intCode.strip('\n').split(',')
 
-        return self.intCodeComputer.diagnostics(intCode, '1')
+        return self.intCodeComputer.diagnostics(intCode, id)
 
     def findClosestWiringIntersection(self, wiringData):
         self.wiring.loadWiringData(wiringData)
@@ -73,3 +73,5 @@ if __name__ == '__main__':
 
     # Day 5
     print(f"== Day 5 - Star One ==\nDiagnostic Result: {santaShip.runIntCodeDiagnostics('diagnostics.txt', 1)}")
+
+    print(f"-- Day 5 - Star Two --\nDiagnostic Result: {santaShip.runIntCodeDiagnostics('diagnostics.txt', 5)}")
