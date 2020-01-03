@@ -1,6 +1,7 @@
 import unittest
 from starship import Starship
 from computer import IntCodeComputer
+from navigation import OrbitMapper
 
 class TestStarship(unittest.TestCase):
     # def test_instruction_parameter_length(self):
@@ -119,6 +120,43 @@ class TestStarship(unittest.TestCase):
         # ID > 8
         self.assertEqual(intCodeComp.diagnostics(program, 9), [1001])
         self.assertEqual(intCodeComp.diagnostics(program, 10), [1001])
+
+    def test_orbitChecksum(self):
+        # Orbit count checksum test
+        orbitMapper = OrbitMapper()
+        testOrbitMap = ["COM)B",
+                        "B)C",
+                        "C)D",
+                        "D)E",
+                        "E)F",
+                        "B)G",
+                        "G)H",
+                        "D)I",
+                        "E)J",
+                        "J)K",
+                        "K)L"]
+
+        orbitMapper.loadMap(testOrbitMap)
+        self.assertEqual(orbitMapper.orbitCountChecksum(), 42)
+
+        # Jump distance from planet 'YOU' to planet 'SAN' test
+        orbitMapper = OrbitMapper()
+        testOrbitMap = ["COM)B",
+                        "B)C",
+                        "C)D",
+                        "D)E",
+                        "E)F",
+                        "B)G",
+                        "G)H",
+                        "D)I",
+                        "E)J",
+                        "J)K",
+                        "K)L",
+                        "K)YOU",
+                        "I)SAN"]
+
+        orbitMapper.loadMap(testOrbitMap)
+        self.assertEqual(orbitMapper.jumpDistance("YOU", "SAN"), 4)
 
 if __name__ == '__main__':
     unittest.main()

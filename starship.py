@@ -4,6 +4,7 @@ from fuel import FuelSystem
 from computer import IntCodeComputer
 from wiring import Wiring
 from password import PasswordAnalyzer
+from navigation import OrbitMapper
 import os
 
 class Starship:   
@@ -13,6 +14,7 @@ class Starship:
         self.intCodeComputer = IntCodeComputer()
         self.wiring = Wiring()
         self.pwAnalyzer = PasswordAnalyzer()
+        self.orbitMapper = OrbitMapper()
         
     def computeRequiredFuel(self, modulesMassData):
         """
@@ -48,30 +50,44 @@ class Starship:
         """
         
         return self.pwAnalyzer.validCombinations(start, end)
-        
+
+    def downloadOrbitMap(self, mapFile):
+        mapData = open(mapFile).readlines()
+        mapData = [p.strip('\n') for p in mapData]
+
+        # orbitMap = OrbitMapper()
+        self.orbitMapper.loadMap(mapData)
+        return self.orbitMapper.orbitCountChecksum()
+
+    def findJumpDistance(self, start, end):
+        return self.orbitMapper.jumpDistance(start, end)
 
 if __name__ == '__main__':
     santaShip = Starship()
 
     # Day 1 
-    print(f"== Day 1 - Star One and Two ==\nRequired fuel: {santaShip.computeRequiredFuel('modules.txt')}")
+    print(f"== Day 1 - Star One and Two ==\n\tRequired fuel: {santaShip.computeRequiredFuel('modules.txt')}")
 
     # Day 2 Puzzle 1
-    print(f"== Day 2 - Star One ==\n1202 Program Alarm result: {santaShip.computeIntCodeResults('opcodes.txt')[0]}")
+    print(f"== Day 2 - Star One ==\n\t1202 Program Alarm result: {santaShip.computeIntCodeResults('opcodes.txt')[0]}")
 
     # Day 2 Puzzle 2
     for a in range(100):
         for b in range(100):
             if santaShip.computeIntCodeResults('opcodes.txt', a=a, b=b)[0] == 19690720:
-                print(f"-- Day 2 - Star Two --\nInput combination a = {a}, b = {b} results in a 19690720 output.")
+                print(f"-- Day 2 - Star Two --\n\tInput combination a = {a}, b = {b} results in a 19690720 output.")
 
     # Day 3
     # santaShip.findClosestWiringIntersection('wiring.txt')
 
     # Day 4 
-    print(f"== Day 4 - Star One and Two ==\nValid passwords: {santaShip.validPasswordCombinations(271973, 785961)}")
+    print(f"== Day 4 - Star One and Two ==\n\tValid passwords: {santaShip.validPasswordCombinations(271973, 785961)}")
 
     # Day 5
-    print(f"== Day 5 - Star One ==\nDiagnostic Result: {santaShip.runIntCodeDiagnostics('diagnostics.txt', 1)}")
+    print(f"== Day 5 - Star One ==\n\tDiagnostic Result: {santaShip.runIntCodeDiagnostics('diagnostics.txt', 1)}")
 
-    print(f"-- Day 5 - Star Two --\nDiagnostic Result: {santaShip.runIntCodeDiagnostics('diagnostics.txt', 5)}")
+    print(f"-- Day 5 - Star Two --\n\tDiagnostic Result: {santaShip.runIntCodeDiagnostics('diagnostics.txt', 5)}")
+
+    # Day 6 
+    print(f"== Day 6 - Star One ==\n\tOrbit Count Checksum: {santaShip.downloadOrbitMap('orbitmap.txt')}")
+    print(f"-- Day 6 - Star Two --\n\tYOU to SAN jump distance: {santaShip.findJumpDistance('YOU', 'SAN')}")

@@ -195,7 +195,7 @@ class IntCodeComputer():
     def stop(self):
         return None
 
-    def getParameters(self, opcodeList, length) -> Tuple:
+    def getParameters(self, opcodeList, length):
         # Determine the parameter mode for the first parameter, and return its value
         if int(opcodeList[Parameter.One]) == ParameterMode.Position:
             a = self.memory[self.memory[self.pointer+1]]
