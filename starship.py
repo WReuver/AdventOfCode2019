@@ -97,3 +97,5 @@ if __name__ == '__main__':
 
     # Day 8
     print(f"== Day 8 - Star one ==\n\tImage checksum result: {santaShip.imageChecksum('biosimage.sif', 25, 6)}")
+    print(f"-- Day 8 - Star Two --\n\tDecoded Bios Password Image: \n")
+    santaShip.decodeBiosPassword('biosimage.sif', 25, 6)

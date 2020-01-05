@@ -15,7 +15,7 @@ class SpaceImageFormatDecoder:
 
     def decode(self, width, height):
         layers = self.splitLayers(width, height)
-        self.buildImage(layers)
+        image = self.buildImage(layers, width, height)
                 
 
     def checksum(self, width, height):
@@ -56,32 +56,45 @@ class SpaceImageFormatDecoder:
         elif pixelValue is PixelValue.Two:
             index = 2
 
-        lowest = counts[0][index]
-        lowestIndex = None
+        # Set the first pixel as supposed lowest
+        lowestIndex = 0
 
         for i, c in enumerate(counts):
-            if c[0] < lowest:
-                lowest = c[0]
+            if c[index] < counts[lowestIndex][index]:
                 lowestIndex = i
 
         return lowestIndex
 
-    def buildImage(self, layers):
-        image = layers[0]
+    def buildImage(self, layers, width, height):
+        layers = [list(layer) for layer in layers]
+        # Let the first layer be the base image
+        imageData = layers[0]
+
         for x, layer in enumerate(layers):
             for i, pixel in enumerate(layer):
-                # print(f"Image[{i}] = {image[i]} and pixel = {pixel}")
-                if image[i] == 2 and pixel != 2:
-                    image[i] = pixel
+                # Replace transparent pixel with non-transparent pixel if the layer contains one
+                if imageData[i] == '2' and pixel != '2':
+                    imageData[i] = pixel
 
-        chop = []
+        self.printImage(imageData, width, height, True)
+
+    def printImage(self, imageData, width, height, ascii=False):
+        image = []
         index = 0
-        for _ in range(6):
-            chop.append(image[index: index + 25])
-            index += 25
+        for _ in range(height):
+            # Split the image into a 2D list corresponding its width and height
+            image.append(imageData[index: index + width])
+            index += width
 
-        chop = [i.replace('2', '-') for i in chop]
-        [print(i) for i in chop]
+        # Rejoin each layer into a continuous string
+        image = [''.join(layer) for layer in image]
+        # Replace numbers with characters for legibility
+        if ascii:
+            image = [i.replace('0', '-') for i in image]
+            image = [i.replace('1', 'Z') for i in image]
+            image = [i.replace('2', '-') for i in image]
+        
+        [print('\t' + i) for i in image]
             
 
 if __name__ == "__main__":    
