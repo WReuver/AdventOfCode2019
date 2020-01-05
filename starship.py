@@ -6,6 +6,7 @@ from wiring import Wiring
 from password import PasswordAnalyzer
 from navigation import OrbitMapper
 from thrusters import AmplifierPhaser
+from decoding import SpaceImageFormatDecoder
 import os
 
 class Starship:   
@@ -26,17 +27,13 @@ class Starship:
         return self.fuelSystem.computeRequiredFuel(modulesMassData)
 
     def computeIntCodeResults(self, intCodeFile, a='12', b='2'):
-        # Read the input file
         intCode = open(intCodeFile).readline()
-        # Process the input data to 
         intCode = intCode.strip('\n').split(',')
 
-        # 
         return self.intCodeComputer.compute(intCode, a , b)
 
     def runIntCodeDiagnostics(self, intCodeFile, id):
         intCode = open(intCodeFile).readline()
-
         intCode = intCode.strip('\n').split(',')
 
         return self.intCodeComputer.diagnostics(intCode, id)
@@ -49,15 +46,13 @@ class Starship:
     def validPasswordCombinations(self, start, end):
         """
         Returns the number of valid password combinations within the given start to end range
-        """
-        
+        """        
         return self.pwAnalyzer.validCombinations(start, end)
 
     def downloadOrbitMap(self, mapFile):
         mapData = open(mapFile).readlines()
         mapData = [p.strip('\n') for p in mapData]
 
-        # orbitMap = OrbitMapper()
         self.orbitMapper.loadMap(mapData)
         return self.orbitMapper.orbitCountChecksum()
 
@@ -69,6 +64,13 @@ class Starship:
         ampControlProgram = ampControllerData.strip('\n').split(',')
 
         return self.ampPhaser.findMaxSignalSetting(ampControlProgram, minPhase, maxPhase)
+    def imageChecksum(self, imageFile, width, height):
+        decoder = SpaceImageFormatDecoder(imageFile)
+        return decoder.checksum(width, height)
+
+    def decodeBiosPassword(self, imageFile, width, height):
+        decoder = SpaceImageFormatDecoder(imageFile)
+        return decoder.decode(width, height)
 
 if __name__ == '__main__':
     santaShip = Starship()
@@ -102,3 +104,7 @@ if __name__ == '__main__':
 
     # Day 7 
     print(f"== Day 7 - Star one ==\n\tMax thruster signal: {santaShip.findMaxThrusterSignal('ampcontroller.txt', 0, 4)}")
+    # Day 8
+    print(f"== Day 8 - Star one ==\n\tImage checksum result: {santaShip.imageChecksum('biosimage.sif', 25, 6)}")
+    print(f"-- Day 8 - Star Two --\n\tDecoded Bios Password Image: \n")
+    santaShip.decodeBiosPassword('biosimage.sif', 25, 6)
