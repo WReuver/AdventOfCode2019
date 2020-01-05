@@ -26,7 +26,7 @@ class Starship:
 
         return self.fuelSystem.computeRequiredFuel(modulesMassData)
 
-    def computeIntCodeResults(self, intCodeFile, a='12', b='2'):
+    def computeIntCodeResults(self, intCodeFile, a=12, b=2):
         intCode = open(intCodeFile).readline()
         intCode = intCode.strip('\n').split(',')
 
@@ -104,7 +104,8 @@ if __name__ == '__main__':
 
     # Day 7 
     print(f"== Day 7 - Star one ==\n\tMax thruster signal: {santaShip.findMaxThrusterSignal('ampcontroller.txt', 0, 4)}")
+    
     # Day 8
     print(f"== Day 8 - Star one ==\n\tImage checksum result: {santaShip.imageChecksum('biosimage.sif', 25, 6)}")
-    print(f"-- Day 8 - Star Two --\n\tDecoded Bios Password Image: \n")
+    print(f"-- Day 8 - Star Two --\n\tDecoded Bios Password Image:")
     santaShip.decodeBiosPassword('biosimage.sif', 25, 6)

@@ -61,9 +61,9 @@ class IntCodeComputer():
         # Set the input parameters
         # Defaults to the required parameters to set the 1202 program alarm state
         if a:
-            program[1] = a
+            self.memory[1] = a
         if b:
-            program[2] = b
+            self.memory[2] = b
             
         # Run the program and return the memory as the result
         self.run(input)
