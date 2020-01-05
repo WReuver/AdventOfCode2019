@@ -44,10 +44,17 @@ class IntCodeComputer():
         # Empty the diagnostic results buffer
         self.output = []
         # Run the program with the provided id value and report the diagnostic results
-        self.run(id)
+        self.run([id])
         return self.output
 
-    def compute(self, program, a=None, b=None):
+    def computeOut(self, program, input=None):
+        self.memory = [int(i) for i in program]
+        self.output = []
+        # Run the program and return the memory as the result
+        self.run(input)
+        return self.output
+
+    def compute(self, program, a=None, b=None, input=None):
         # Load the program into memory
         self.memory = [int(i) for i in program]
 
@@ -59,12 +66,13 @@ class IntCodeComputer():
             program[2] = b
             
         # Run the program and return the memory as the result
-        self.run()
+        self.run(input)
         return self.memory
 
-    def run(self, testInput=None):
+    def run(self, input=None):
         self.pointer = 0
         self.didPointerMove = False
+        self.inputPointer = 0
 
         while self.pointer < len(self.memory) - 1:
             # Get the opcode from the current pointer position
@@ -79,8 +87,9 @@ class IntCodeComputer():
             # 
             if op == "99":
                 break
-            elif op == "03" and testInput is not None:
-                self.opcodes[op].operation(opcode, testInput)
+            elif op == "03" and input is not None:
+                self.opcodes[op].operation(opcode, input[self.inputPointer])
+                self.inputPointer += 1
             else:
                 self.opcodes[op].operation(opcode)            
 

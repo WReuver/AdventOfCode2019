@@ -5,6 +5,7 @@ from computer import IntCodeComputer
 from wiring import Wiring
 from password import PasswordAnalyzer
 from navigation import OrbitMapper
+from thrusters import AmplifierPhaser
 import os
 
 class Starship:   
@@ -15,6 +16,7 @@ class Starship:
         self.wiring = Wiring()
         self.pwAnalyzer = PasswordAnalyzer()
         self.orbitMapper = OrbitMapper()
+        self.ampPhaser = AmplifierPhaser()
         
     def computeRequiredFuel(self, modulesMassData):
         """
@@ -62,6 +64,12 @@ class Starship:
     def findJumpDistance(self, start, end):
         return self.orbitMapper.jumpDistance(start, end)
 
+    def findMaxThrusterSignal(self, ampControllerFile, minPhase, maxPhase):
+        ampControllerData = open(ampControllerFile).readline()
+        ampControlProgram = ampControllerData.strip('\n').split(',')
+
+        return self.ampPhaser.findMaxSignalSetting(ampControlProgram, minPhase, maxPhase)
+
 if __name__ == '__main__':
     santaShip = Starship()
 
@@ -91,3 +99,6 @@ if __name__ == '__main__':
     # Day 6 
     print(f"== Day 6 - Star One ==\n\tOrbit Count Checksum: {santaShip.downloadOrbitMap('orbitmap.txt')}")
     print(f"-- Day 6 - Star Two --\n\tYOU to SAN jump distance: {santaShip.findJumpDistance('YOU', 'SAN')}")
+
+    # Day 7 
+    print(f"== Day 7 - Star one ==\n\tMax thruster signal: {santaShip.findMaxThrusterSignal('ampcontroller.txt', 0, 4)}")
